@@ -19,7 +19,7 @@ java -jar target/classfiledumper-1.0-SNAPSHOT.jar dump [-p interfacesOrParents] 
 e.g.
 ```shell
 java -jar target/classfiledumper-1.0-SNAPSHOT.jar dump -p javax.servlet.Filter -p javax.servlet.Servlet 114514 '.*' /tmp/dumps
-java -jar target/classfiledumper-1.0-SNAPSHOT.jar dump 1919810 'com\.ctf\.problems\..*' /tmp/dumps
+java -jar target/classfiledumper-1.0-SNAPSHOT.jar dump 1919810 'some\.ctf\.challenges\..*' /tmp/dumps
 ```
 
 注意: 如果是老版本 (<= 8) java, 需要带上额外参数
