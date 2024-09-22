@@ -43,7 +43,18 @@ public class ClassFileDumper implements ClassFileTransformer {
 
     public void dump(ClassFileDumperConfig config) {
         synchronized (this.enabled) {
+            if (this.currConfig != null && (this.currConfig.premain || config.premain)) {
+                // 如果已经是 premain 模式, 不允许再修改配置了, 或者修改到 premain
+                return;
+            }
+
             this.currConfig = config;
+            if (this.currConfig.premain) {
+                // 如果是 premain 模式, 就不用去管 parents
+                this.enabled.set(true);
+                return;
+            }
+
             this.waitingClasses = Collections.newSetFromMap(new ConcurrentHashMap<Class<?>, Boolean>());
 
             for (Class<?> clazz : this.instrumentation.getAllLoadedClasses()) {
@@ -110,7 +121,15 @@ public class ClassFileDumper implements ClassFileTransformer {
     @Override
     public byte[] transform(ClassLoader classLoader, String className, Class<?> clazz, ProtectionDomain protectionDomain, byte[] classBytes) throws IllegalClassFormatException {
         if (this.enabled.get() && className != null) {
-            if (waitingClasses.remove(clazz)) {
+            boolean dump;
+
+            if (this.currConfig.premain) {
+                dump = this.currConfig.packagePattern.matcher(className.replace('/', '.')).matches();
+            } else {
+                dump = waitingClasses.remove(clazz);
+            }
+
+            if (dump) {
                 if (className.contains("/")) {
                     new File(this.currConfig.outputBaseDir, className.substring(0, className.lastIndexOf('/'))).mkdirs();
                 }

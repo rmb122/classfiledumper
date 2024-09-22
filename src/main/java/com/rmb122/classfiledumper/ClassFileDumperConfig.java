@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class ClassFileDumperConfig {
+    public boolean premain;
     public String outputBaseDir;
     public Pattern packagePattern;
     public ArrayList<ArrayList<String>> parents = new ArrayList<ArrayList<String>>();
 
     public String serialize() {
         StringBuilder stringBuilder = new StringBuilder();
+        Serialize.writeBoolean(stringBuilder, premain);
         Serialize.writeString(stringBuilder, outputBaseDir);
         if (packagePattern == null) {
             Serialize.writeString(stringBuilder, null);
@@ -31,6 +33,7 @@ public class ClassFileDumperConfig {
         StringCharacterIterator iterator = new StringCharacterIterator(serializedConfig);
         ClassFileDumperConfig classFileDumperConfig = new ClassFileDumperConfig();
 
+        classFileDumperConfig.premain = Serialize.readBoolean(iterator);
         String outputBaseDir = Serialize.readString(iterator);
         if (outputBaseDir == null) {
             classFileDumperConfig.outputBaseDir = "./dumps/";

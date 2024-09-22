@@ -34,8 +34,8 @@ public class Main {
             System.out.println("Usage: java -jar " + getJarName() + " mode args...");
             System.out.println("\tAvailable mode: list, dump");
             System.out.println("\tDump example:");
-            System.out.println("\t\tdump -p interfacesOrParents attachTarget packagePattern outputBaseDir");
-            System.out.println("\t\tdump -p I1,I2 -p I3,I4 -p P1 -p P2 114514 'com\\.rmb122\\.demo\\..*' dumps/");
+            System.out.println("\t\tdump -p interfacesOrParents attachTarget outputBaseDir packagePattern");
+            System.out.println("\t\tdump -p I1,I2 -p I3,I4 -p P1 -p P2 114514 dumps/ 'com\\.rmb122\\.demo\\..*'");
             return;
         }
 
@@ -47,6 +47,7 @@ public class Main {
         } else if (MODE_DUMP.equals(args[0])) {
             ClassFileDumperConfig config = new ClassFileDumperConfig();
 
+            config.premain = false;
             String attachTarget = null;
 
             for (int i = 1; i < args.length; i++) {
@@ -55,10 +56,10 @@ public class Main {
                     i++;
                 } else if (attachTarget == null) {
                     attachTarget = args[i];
-                } else if (config.packagePattern == null) {
-                    config.packagePattern = Pattern.compile(args[i]);
                 } else if (config.outputBaseDir == null) {
                     config.outputBaseDir = new File(args[i]).getAbsolutePath();
+                } else if (config.packagePattern == null) {
+                    config.packagePattern = Pattern.compile(args[i]);
                 } else {
                     System.out.println("too much argument given");
                     return;
@@ -69,13 +70,12 @@ public class Main {
                 System.out.println("you must specify a attachTarget");
                 return;
             }
-            if (config.packagePattern == null) {
-                System.out.println("you must specify a packagePattern");
-                return;
-            }
             if (config.outputBaseDir == null) {
                 System.out.println("you must specify a outputBaseDir");
                 return;
+            }
+            if (config.packagePattern == null) {
+                config.packagePattern = Pattern.compile(".*");
             }
 
             VirtualMachine vm = VirtualMachine.attach(attachTarget);

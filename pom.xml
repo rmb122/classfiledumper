@@ -35,7 +35,7 @@
                             <mainClass>com.rmb122.classfiledumper.Main</mainClass>
                         </manifest>
                         <manifestEntries>
-                            <!-- <Premain-Class>com.rmb122.classfiledumper.Agent</Premain-Class> -->
+                            <Premain-Class>com.rmb122.classfiledumper.Agent</Premain-Class>
                             <Agent-Class>com.rmb122.classfiledumper.Agent</Agent-Class>
                             <Can-Retransform-Classes>true</Can-Retransform-Classes>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>

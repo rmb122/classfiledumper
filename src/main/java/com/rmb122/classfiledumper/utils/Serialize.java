@@ -27,6 +27,10 @@ public class Serialize {
         }
     }
 
+    public static void writeBoolean(StringBuilder stringBuilder, boolean value) {
+        stringBuilder.append(value ? "+" : "-");
+    }
+
     public static Integer readInteger(StringCharacterIterator iterator) {
         int integer = 0;
         while (iterator.current() != '|') {
@@ -65,6 +69,11 @@ public class Serialize {
             stringArray.add(readString(iterator));
         }
         return stringArray;
+    }
+
+    public static boolean readBoolean(StringCharacterIterator iterator) {
+        char curr = iterator.next();
+        return curr == '+';
     }
 
     public static void main(String[] args) {
